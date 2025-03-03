@@ -166,7 +166,7 @@
   - rule_1.1.1.8
   - udf
 
-- name: Ensure nodev option set on /var partition
+- name: SCORED | 1.1.2.4.2 | PATCH | Ensure nodev option set on /var partition
   replace:
     path: /etc/fstab
     regexp: '^(.*\s/var\s.*\s)(defaults|rw)(.*)$'
@@ -177,7 +177,7 @@
     - nodev
     - patch
 
-- name: Ensure nosuid option set on /var partition
+- name: SCORED | 1.1.2.4.3 | PATCH | Ensure nosuid option set on /var partition
   replace:
     path: /etc/fstab
     regexp: '^(.*\s/var\s.*\s)(defaults|rw)(.*)$'
@@ -188,7 +188,14 @@
     - nosuid
     - patch
 
-- name: Ensure nodev option set on /var/log partition
+- name: SCORED | 1.1.2.4.2 | PATCH | Remount /var partition
+  command: mount -o remount /var
+  when: suse15cis_rule_1_1_2_4_2 or suse15cis_rule_1_1_2_4_3
+  tags:
+    - remount
+    - var
+
+- name: SCORED | 1.1.2.6.1 | PATCH | Ensure nodev option set on /var/log partition
   replace:
     path: /etc/fstab
     regexp: '^(.*\s/var/log\s.*\s)(defaults|rw)(.*)$'
@@ -199,7 +206,7 @@
     - nodev
     - patch
 
-- name: Ensure nosuid option set on /var/log partition
+- name: SCORED | 1.1.2.6.3 | PATCH | Ensure nosuid option set on /var/log partition
   replace:
     path: /etc/fstab
     regexp: '^(.*\s/var/log\s.*\s)(defaults|rw)(.*)$'
@@ -210,7 +217,7 @@
     - nosuid
     - patch
 
-- name: Ensure noexec option set on /var/log partition
+- name: SCORED | 1.1.2.6.4 | PATCH | Ensure noexec option set on /var/log partition
   replace:
     path: /etc/fstab
     regexp: '^(.*\s/var/log\s.*\s)(defaults|rw)(.*)$'
@@ -221,7 +228,14 @@
     - noexec
     - patch
 
-- name: Ensure nodev option set on /var/log/audit partition
+- name: SCORED | 1.1.2.6.4 | PATCH | Remount /var/log partition
+  command: mount -o remount /var/log
+  when: suse15cis_rule_1_1_2_6_2 or suse15cis_rule_1_1_2_6_3 or suse15cis_rule_1_1_2_6_4
+  tags:
+    - remount
+    - var_log
+
+- name: SCORED | 1.1.2.7.2 | PATCH | Ensure nodev option set on /var/log/audit partition
   replace:
     path: /etc/fstab
     regexp: '^(.*\s/var/log/audit\s.*\s)(defaults|rw)(.*)$'
@@ -232,7 +246,7 @@
     - nodev
     - patch
 
-- name: Ensure nosuid option set on /var/log/audit partition
+- name: SCORED | 1.1.2.7.3 | PATCH | Ensure nosuid option set on /var/log/audit partition
   replace:
     path: /etc/fstab
     regexp: '^(.*\s/var/log/audit\s.*\s)(defaults|rw)(.*)$'
@@ -243,7 +257,7 @@
     - nosuid
     - patch
 
-- name: Ensure noexec option set on /var/log/audit partition
+- name: SCORED | 1.1.2.7.4 | PATCH | Ensure noexec option set on /var/log/audit partition
   replace:
     path: /etc/fstab
     regexp: '^(.*\s/var/log/audit\s.*\s)(defaults|rw)(.*)$'
@@ -254,33 +268,14 @@
     - noexec
     - patch
 
-- name: Remount /var partition
-  command: mount -o remount /var
-  when: suse15cis_rule_1_1_2_4_2 or suse15cis_rule_1_1_2_4_3
-  tags:
-    - remount
-    - var
-
-- name: Remount /var/log partition
-  command: mount -o remount /var/log
-  when: suse15cis_rule_1_1_2_6_2 or suse15cis_rule_1_1_2_6_3 or suse15cis_rule_1_1_2_6_4
-  tags:
-    - remount
-    - var_log
-
-- name: Remount /var/log/audit partition
+- name: SCORED | 1.1.2.7.3 | PATCH | Remount /var/log/audit partition
   command: mount -o remount /var/log/audit
   when: suse15cis_rule_1_1_2_7_2 or suse15cis_rule_1_1_2_7_3 or suse15cis_rule_1_1_2_7_4
   tags:
     - remount
     - var_log_audit
 
-- name: SCORED | 1.5.1 - 3.3.10 | PATCH | Ensure sysctl parameters are set for security compliance
-  hosts: all
-  become: yes
-  tasks:
-
-- name: Ensure Address Space Layout Randomization (ASLR) is enabled
+- name: SCORED | 1.5.1 | PATCH | Ensure Address Space Layout Randomization (ASLR) is enabled
   lineinfile:
     path: /etc/sysctl.d/60-kernel_sysctl.conf
     regexp: '^kernel.randomize_va_space'
@@ -292,7 +287,7 @@
     - rule_1.5.1
     - aslr
 
-- name: Ensure IP forwarding is disabled (IPv4)
+- name: SCORED | 3.3.1 | PATCH | Ensure IP forwarding is disabled (IPv4)
   lineinfile:
     path: /etc/sysctl.d/60-netipv4_sysctl.conf
     regexp: '^net.ipv4.ip_forward'
@@ -304,7 +299,7 @@
     - rule_3.3.1
     - ip_forwarding
 
-- name: Ensure IP forwarding is disabled (IPv6)
+- name: SCORED | 3.3.1 | PATCH | Ensure IP forwarding is disabled (IPv6)
   lineinfile:
     path: /etc/sysctl.d/60-netipv6_sysctl.conf
     regexp: '^net.ipv6.conf.all.forwarding'
@@ -316,7 +311,7 @@
     - rule_3.3.1
     - ipv6_forwarding
 
-- name: Ensure TCP SYN Cookies is enabled
+- name: SCORED | 3.3.10 | PATCH | Ensure TCP SYN Cookies is enabled
   lineinfile:
     path: /etc/sysctl.d/60-netipv4_sysctl.conf
     regexp: '^net.ipv4.tcp_syncookies'
@@ -328,7 +323,7 @@
     - rule_3.3.10
     - tcp_syncookies
 
-- name: Ensure packet redirect sending is disabled
+- name: SCORED | 3.3.2 | PATCH | Ensure packet redirect sending is disabled
   lineinfile:
     path: /etc/sysctl.d/60-netipv4_sysctl.conf
     regexp: '^net.ipv4.conf.all.send_redirects'
@@ -340,7 +335,7 @@
     - rule_3.3.2
     - send_redirects
 
-- name: Ensure bogus ICMP responses are ignored
+- name: SCORED | 3.3.3 | PATCH | Ensure bogus ICMP responses are ignored
   lineinfile:
     path: /etc/sysctl.d/60-netipv4_sysctl.conf
     regexp: '^net.ipv4.icmp_ignore_bogus_error_responses'
@@ -352,7 +347,7 @@
     - rule_3.3.3
     - icmp_bogus
 
-- name: Ensure broadcast ICMP requests are ignored
+- name: SCORED | 3.3.4 | PATCH | Ensure broadcast ICMP requests are ignored
   lineinfile:
     path: /etc/sysctl.d/60-netipv4_sysctl.conf
     regexp: '^net.ipv4.icmp_echo_ignore_broadcasts'
@@ -364,7 +359,7 @@
     - rule_3.3.4
     - icmp_broadcast
 
-- name: Ensure ICMP redirects are not accepted
+- name: SCORED | 3.3.6 | PATCH | Ensure ICMP redirects are not accepted
   lineinfile:
     path: /etc/sysctl.d/60-netipv4_sysctl.conf
     regexp: '^net.ipv4.conf.all.accept_redirects'
@@ -376,7 +371,7 @@
     - rule_3.3.5
     - icmp_redirects
 
-- name: Ensure secure ICMP redirects are not accepted
+- name: SCORED | 3.3.6 | PATCH | Ensure secure ICMP redirects are not accepted
   lineinfile:
     path: /etc/sysctl.d/60-netipv4_sysctl.conf
     regexp: '^net.ipv4.conf.all.secure_redirects'
@@ -388,7 +383,7 @@
     - rule_3.3.6
     - secure_icmp_redirects
 
-- name: Ensure Reverse Path Filtering is enabled
+- name: SCORED | 3.3.7 | PATCH | Ensure Reverse Path Filtering is enabled
   lineinfile:
     path: /etc/sysctl.d/60-netipv4_sysctl.conf
     regexp: '^net.ipv4.conf.all.rp_filter'
@@ -400,7 +395,7 @@
     - rule_3.3.7
     - rp_filter
 
-- name: Ensure source-routed packets are not accepted
+- name: SCORED | 3.3.8 | PATCH | Ensure source routed packets are not accepted
   lineinfile:
     path: /etc/sysctl.d/60-netipv4_sysctl.conf
     regexp: '^net.ipv4.conf.all.accept_source_route'
@@ -412,7 +407,7 @@
     - rule_3.3.8
     - source_route
 
-- name: Ensure suspicious packets are logged
+- name: SCORED | 3.3.9 | PATCH | Ensure suspicious packets are logged
   lineinfile:
     path: /etc/sysctl.d/60-netipv4_sysctl.conf
     regexp: '^net.ipv4.conf.all.log_martians'
